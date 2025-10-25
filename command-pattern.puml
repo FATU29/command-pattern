@@ -1,0 +1,106 @@
+@startuml Command Pattern - Light Control System
+
+' Interface
+interface ICommand {
+  + execute(): void
+  + undo(): void
+}
+
+' Receiver
+class Light {
+  - status: boolean
+  + on(): void
+  + off(): void
+}
+
+' Null Object Pattern
+class NoCommand {
+  + execute(): void
+  + undo(): void
+}
+
+' Concrete Commands - Living Room
+class OnLivingRoomLightCommand {
+  - light: Light
+  + constructor(light: Light)
+  + execute(): void
+  + undo(): void
+}
+
+class OffLivingRoomLightCommand {
+  - light: Light
+  + constructor(light: Light)
+  + execute(): void
+  + undo(): void
+}
+
+' Concrete Commands - Bed Room
+class OnBedRoomLightCommand {
+  - light: Light
+  + constructor(light: Light)
+  + execute(): void
+  + undo(): void
+}
+
+class OffBedRoomLightCommand {
+  - light: Light
+  + constructor(light: Light)
+  + execute(): void
+  + undo(): void
+}
+
+' Macro Command
+class MacroCommand {
+  - Commands: ICommand[]
+  + constructor(Commands: ICommand[])
+  + execute(): void
+  + undo(): void
+}
+
+' Invoker
+class Remote {
+  - CommandOn: ICommand[]
+  - CommandOff: ICommand[]
+  - NoCommand: ICommand
+  - History: ICommand
+  + setRemote(slot: number, commandOn: ICommand, commandOff: ICommand): void
+  + buttonClickOn(slot: number): void
+  + buttonClickOff(slot: number): void
+  + buttonClickUndo(): void
+}
+
+' Relationships
+ICommand <|.. NoCommand
+ICommand <|.. OnLivingRoomLightCommand
+ICommand <|.. OffLivingRoomLightCommand
+ICommand <|.. OnBedRoomLightCommand
+ICommand <|.. OffBedRoomLightCommand
+ICommand <|.. MacroCommand
+
+OnLivingRoomLightCommand --> Light : uses
+OffLivingRoomLightCommand --> Light : uses
+OnBedRoomLightCommand --> Light : uses
+OffBedRoomLightCommand --> Light : uses
+
+MacroCommand o-- ICommand : contains
+
+Remote o-- ICommand : stores
+Remote --> NoCommand : default
+
+note right of Remote
+  Invoker with 7 slots
+  Maintains command history
+  Supports undo operation
+end note
+
+note right of MacroCommand
+  Composite Pattern
+  Executes multiple commands
+end note
+
+note left of Light
+  Receiver
+  Actual business logic
+end note
+
+@enduml
